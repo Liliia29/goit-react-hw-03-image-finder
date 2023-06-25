@@ -13,6 +13,7 @@ const customStyled = {
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         zIndex: 1200,
+        
       },
 
       content: {
@@ -41,6 +42,8 @@ export const Modal = ( {isOpen, largeImageURL, tags, onClose}) => {
             
         </ReactModal>
     );
+
+    
 };
 
 Modal.propTypes = {

@@ -45,6 +45,7 @@ export const SearchFormButton = styled.button`
   
     :hover {
     opacity: 1;
+
   }
 `;
   

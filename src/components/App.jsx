@@ -1,8 +1,8 @@
 import { Component } from 'react';
 
-import {ToastContainer, toast} from 'react-toastify';
-import {getImagesAPI} from '';
-import {normalizedHits} from '';
+import { ToastContainer} from 'react-toastify';
+import { getImagesAPI } from '../api';
+import { normalizeHits } from '../normalizedHits';
 import { ImageGallery } from 'components/ImageGallery';
 import { Button } from 'components/Button';
 import { Searchbar } from 'components/Searchbar';
@@ -31,56 +31,42 @@ export class App extends Component {
   }
 
   getImages = async () => {
-    const {query,  currentPage} = this.state;
+    const { query, currentPage } = this.state;
 
-    if (this.abortCtrl){
+    if (this.abortCtrl) {
       this.abortCtrl.abort();
     }
 
     this.abortCtrl = new AbortController();
 
-try {
-  this.setState({isLoading: true});
+    try {
+      this.setState({ isLoading: true });
 
-  const data = await getImagesAPI(
-    query,
-    currentPage,
-    this.abortCtrl.signal
-  );
+      const data = await getImagesAPI(
+        query,
+        currentPage,
+        this.abortCtrl.signal
+      );
 
-  if(data.hits.length === 0){
-    return toast.info('Sorry, no images for your query...', {
-      position: toast.POSITION.TOP_RIGHT,
-    });
-  } else if (currentPage === 1){
-    toast.success('Wow! We found some images for you!', {
-      position: toast.POSITION.TOP_RIGHT,
-    });
-  } else {
-    toast.success('Wow! We found some more images for you!', {
-      position: toast.POSITION.TOP_RIGHT,
-    });
-  }
+      const normalizedHits = normalizeHits(data.hits);
 
-  const normalizedHits = normalizedHits(data.hits);
-
-  this.setState(prevState => ({
-    images: [...prevState.images, ...normalizedHits],
-    isLastPage:
-    prevState.images.length + normalizedHits.length >= data.totalHits,
-    error: null,
-  }));
-} catch (error) {
-  if (error.code !== 'ERR_CANCELED') {
-    this.setState ({ error: error.message});
-  }
-} finally{
-  this.setState({ isLoading: false});
-}
+      this.setState(prevState => ({
+        images: [...prevState.images, ...normalizedHits],
+        isLastPage:
+          prevState.images.length + normalizedHits.length >= data.totalHits,
+        error: null,
+      }));
+    } catch (error) {
+      if (error.code !== 'ERR_CANCELED') {
+        this.setState({ error: error.message });
+      }
+    } finally {
+      this.setState({ isLoading: false });
+    }
   };
 
   handleSearchSubmit = query => {
-    if (this.state.query === query){
+    if (this.state.query === query) {
       return;
     }
 
@@ -94,22 +80,22 @@ try {
   };
 
   loadMore = () => {
-    this.setState(prevState =>({
+    this.setState(prevState => ({
       currentPage: prevState.currentPage + 1,
     }));
   };
 
-  render(){
-    const {images, isLoading, error, isLastPage} = this.state;
+  render() {
+    const { images, isLoading, error, isLastPage } = this.state;
 
     return (
       <AppWrapper>
         <ToastContainer autoClose={2500} />
-        <Searchbar onSubmit={this.handleSearchSubmit}/>
+        <Searchbar onSubmit={this.handleSearchSubmit} />
 
         {error && <Error>Error: {error} </Error>}
 
-        <ImageGallery images={images}/>
+        <ImageGallery images={images} />
 
         {isLoading && <Loader />}
 
@@ -119,5 +105,4 @@ try {
       </AppWrapper>
     );
   }
-
 }
