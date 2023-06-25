@@ -49,6 +49,6 @@ export const Modal = ( {isOpen, largeImageURL, tags, onClose}) => {
 Modal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     largeImageURL: PropTypes.string.isRequired,
-    tags: PropTypes.string .isRequired,
+    tags: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
 }
